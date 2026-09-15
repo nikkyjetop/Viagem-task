@@ -1,20 +1,30 @@
-<?php
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-$url = "https://services.cuzk.gov.cz/wfs/inspire-CP-wfs.asp?service=WFS&version=2.0.0&request=GetFeature&typeNames=CadastralParcel&count=1";
+    <title>Parcely Jičín</title>
 
-$ch = curl_init($url);
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
 
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
 
-$response = curl_exec($ch);
+<body>
 
-if ($response === false) {
-    echo "CHYBA:<br>";
-    echo curl_error($ch);
-} else {
-    echo "REQUEST FUNGUJE!<br><br>";
+    <div id="map"></div>
 
-    echo "<pre>";
-    echo htmlspecialchars($response);
-    echo "</pre>";
-}
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Our JS -->
+    <script src="app.js"></script>
+
+</body>
+</html>
