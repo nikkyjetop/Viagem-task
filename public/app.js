@@ -4,7 +4,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-map.on('click', function (event) {
-    console.log('Latitude:', event.latlng.lat);
-    console.log('Longitude:', event.latlng.lng);
+map.on('click', async function (event) {
+    const lat = event.latlng.lat;
+    const lng = event.latlng.lng;
+
+    const response = await fetch(
+        `/api/parcel.php?lat=${lat}&lng=${lng}`
+    );
+
+    const data = await response.json();
+
+    console.log(data);
 });
