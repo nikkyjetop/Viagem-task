@@ -73,14 +73,49 @@ if ($xml === false) {
 // Get the namespaces used in the ČÚZK XML response.
 $namespaces = $xml->getDocNamespaces(true);
 
+// When the click didn't hit a parcel (water, gap in the cadastre, outside
+// CZ, ...), ČÚZK returns an empty <FeatureCollection/> with no "cp"
+// namespace instead of a <cp:CadastralParcel>.
+if (!isset($namespaces['cp'])) {
+    http_response_code(404);
+
+    echo json_encode([
+        'error' => 'No parcel found at this location'
+    ]);
+
+    exit;
+}
+
 // Namespace used for cadastral parcel elements.
 $cp = $namespaces['cp'];
 
 // Namespace used for GML geometry elements.
 $gml = $namespaces['gml'];
 
+// Namespace used for xlink attributes (parcel/zoning titles).
+$xlink = $namespaces['xlink'];
+
 // Access the cadastral parcel elements.
 $parcel = $xml->children($cp);
+
+// The katastrální území (cadastral territory) this parcel belongs to,
+// taken from the "zoning" reference's human-readable title.
+$cadastralTerritory = (string) $parcel->zoning->attributes($xlink)->title;
+
+// Application scope: povinné minimum je k.ú. Jičín, doplněné o 3 další
+// sousední katastrální území (viz README).
+$supportedTerritories = ['Jičín', 'Valdice', 'Holín', 'Železnice'];
+
+if (!in_array($cadastralTerritory, $supportedTerritories, true)) {
+    http_response_code(422);
+
+    echo json_encode([
+        'error' => 'Parcel is outside the covered area',
+        'cadastralTerritory' => $cadastralTerritory
+    ]);
+
+    exit;
+}
 
 // Access the parcel geometry.
 $geometry = $parcel->geometry->children($gml);
@@ -119,5 +154,6 @@ echo json_encode([
     'label' => $label,
     'nationalReference' => $nationalReference,
     'area' => $area,
+    'cadastralTerritory' => $cadastralTerritory,
     'geometry' => $polygonCoordinates
 ]);
