@@ -1,7 +1,29 @@
-const map = L.map('map').setView([50.437, 15.351], 13);
+// Covered scope: katastrální území Jičín (povinné minimum) plus three
+// neighbouring territories (Valdice, Holín, Železnice). Keeping the app
+// focused on this area is what lets it stay fluid — see README for why.
+const SCOPE_BOUNDS = L.latLngBounds(
+    [50.38, 15.25],
+    [50.52, 15.44]
+);
+
+const map = L.map('map', {
+    maxBounds: SCOPE_BOUNDS.pad(0.05),
+    maxBoundsViscosity: 1.0,
+    minZoom: 12
+}).fitBounds(SCOPE_BOUNDS);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// ČÚZK WMS overlay so parcel boundaries/numbers are visible across the
+// whole map, not just for the parcel that was last clicked.
+L.tileLayer.wms('https://services.cuzk.cz/wms/wms.asp', {
+    layers: 'KN',
+    format: 'image/png',
+    transparent: true,
+    version: '1.1.1',
+    attribution: '&copy; ČÚZK'
 }).addTo(map);
 
 // Keep track of the currently displayed parcel.
