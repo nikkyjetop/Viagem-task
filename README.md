@@ -14,7 +14,7 @@ Interview task for Viagem — a map of cadastral parcels in the Jičín district
 ## Run
 
 ```bash
-php -S localhost:8000 -t public
+php -S localhost:8000 -t public router.php
 ```
 
 Then open `http://localhost:8000`.

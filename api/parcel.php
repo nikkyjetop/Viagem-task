@@ -1,7 +1,7 @@
 <?php
 
-require __DIR__ . '/../../src/CuzkClient.php';
-require __DIR__ . '/../../src/ParcelParser.php';
+require __DIR__ . '/../src/CuzkClient.php';
+require __DIR__ . '/../src/ParcelParser.php';
 
 // Get coordinates from the Leaflet map.
 $lat = $_GET['lat'] ?? null;
